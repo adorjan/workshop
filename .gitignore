@@ -1,6 +1,7 @@
 .eclipse/
 target/
 bin/
+test-output/
 .project
 .classpath
 .settings/
