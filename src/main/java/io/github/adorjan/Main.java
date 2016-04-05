@@ -3,7 +3,10 @@
  */
 package io.github.adorjan;
 
-import io.github.adorjan.reader.SimpleStaticReader;
+import java.util.Properties;
+
+import io.github.adorjan.loader.PropertiesLoader;
+import io.github.adorjan.reader.PropertiesReader;
 import io.github.adorjan.writer.LoggerBasedWriter;
 
 /**
@@ -11,13 +14,24 @@ import io.github.adorjan.writer.LoggerBasedWriter;
  *
  */
 public class Main {
+
     /**
      * @param args
      */
     public static void main(String[] args) {
-        Reader reader = new SimpleStaticReader("Helloka");
-        Writer writer = new LoggerBasedWriter();
-        App app = new App(reader, writer);
-        app.doRun();
+        createApp().doRun();
+    }
+
+    private static App createApp() {
+        return new App(createReader(), createWriter());
+    }
+
+    private static Reader createReader() {
+        Loader<Properties> loader = new PropertiesLoader();
+        return new PropertiesReader(loader.load("message.properties"), "greeting.message");
+    }
+
+    private static Writer createWriter() {
+        return new LoggerBasedWriter();
     }
 }
