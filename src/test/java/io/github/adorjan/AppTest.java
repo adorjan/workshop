@@ -27,10 +27,8 @@ public class AppTest {
         // GIVEN
         InOrder inOrder = Mockito.inOrder(mockReader, mockWriter);
         BDDMockito.willReturn("Hello").given(mockReader).read();
-
         // WHEN
         underTest.doRun();
-
         // THEN
         inOrder.verify(mockReader).read();
         inOrder.verify(mockWriter).write("Hello");

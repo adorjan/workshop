@@ -14,7 +14,7 @@ public class LoggerBasedWriterTest {
     private Logger mockLogger;
 
     @BeforeMethod
-    public void beforeMethod() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         underTest = new LoggerBasedWriter();
         underTest.setLogger(mockLogger);
@@ -22,11 +22,9 @@ public class LoggerBasedWriterTest {
 
     @Test
     public void testWriteShouldLogParameterWhenInvoked() {
-        // GIVEN in BeforeMethod
-
+        // GIVEN in setUp
         // WHEN
         underTest.write("Hello");
-
         // THEN
         Mockito.verify(mockLogger).info("Hello");
     }

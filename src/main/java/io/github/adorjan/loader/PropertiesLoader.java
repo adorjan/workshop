@@ -11,19 +11,19 @@ import org.slf4j.LoggerFactory;
 
 import io.github.adorjan.Loader;
 
-public class PropertiesLoader implements Loader<Properties> {
+public class PropertiesLoader implements Loader<Properties, Optional<InputStream>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesLoader.class);
+    private Logger logger = LoggerFactory.getLogger(PropertiesLoader.class);
 
     @Override
-    public Optional<Properties> load(String filename) {
+    public Optional<Properties> load(Optional<InputStream> inputStream) {
         Optional<Properties> properties = Optional.empty();
-        try (InputStream propertiesInputStream = getPropertiesInputStream(filename)) {
+        try (InputStream propertiesInputStream = inputStream.orElseThrow(() -> new FileNotFoundException())) {
             properties = Optional.of(loadProperties(propertiesInputStream));
         } catch (FileNotFoundException e) {
-            LOGGER.error("Properties file not found {}", filename, e);
+            logger.error("Properties file not found", e);
         } catch (IOException e) {
-            LOGGER.error("Unable to load properties file {}", filename, e);
+            logger.error("Unable to load properties file", e);
         }
         return properties;
     }
@@ -34,11 +34,7 @@ public class PropertiesLoader implements Loader<Properties> {
         return properties;
     }
 
-    private InputStream getPropertiesInputStream(String filename) throws FileNotFoundException {
-        InputStream inputStream = PropertiesLoader.class.getClassLoader().getResourceAsStream(filename);
-        if (inputStream == null) {
-            throw new FileNotFoundException();
-        }
-        return inputStream;
+    void setLogger(Logger logger) {
+        this.logger = logger;
     }
 }

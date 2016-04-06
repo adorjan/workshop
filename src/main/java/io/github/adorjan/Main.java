@@ -3,8 +3,11 @@
  */
 package io.github.adorjan;
 
+import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 
+import io.github.adorjan.loader.InputStreamLoader;
 import io.github.adorjan.loader.PropertiesLoader;
 import io.github.adorjan.reader.PropertiesReader;
 import io.github.adorjan.writer.LoggerBasedWriter;
@@ -26,9 +29,16 @@ public class Main {
         return new App(createReader(), createWriter());
     }
 
+    private static Optional<InputStream> createInputStream() {
+        return new InputStreamLoader().load("message.properties");
+    }
+
+    private static Optional<Properties> createProperties(Optional<InputStream> inputStream) {
+        return new PropertiesLoader().load(inputStream);
+    }
+
     private static Reader createReader() {
-        Loader<Properties> loader = new PropertiesLoader();
-        return new PropertiesReader(loader.load("message.properties"), "greeting.message");
+        return new PropertiesReader(createProperties(createInputStream()), "greeting.message");
     }
 
     private static Writer createWriter() {
