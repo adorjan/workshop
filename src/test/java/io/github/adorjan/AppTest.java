@@ -1,10 +1,11 @@
 package io.github.adorjan;
 
-import org.mockito.BDDMockito;
+import static org.mockito.BDDMockito.willReturn;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.MockitoAnnotations.initMocks;
+
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -18,19 +19,17 @@ public class AppTest {
 
     @BeforeMethod
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
         underTest = new App(mockReader, mockWriter);
     }
 
     @Test
     public void testDoRunShouldInvokeDependenciesInOrderWhenInvoked() {
         // GIVEN
-        InOrder inOrder = Mockito.inOrder(mockReader, mockWriter);
-        BDDMockito.willReturn("Hello").given(mockReader).read();
-
+        InOrder inOrder = inOrder(mockReader, mockWriter);
+        willReturn("Hello").given(mockReader).read();
         // WHEN
         underTest.doRun();
-
         // THEN
         inOrder.verify(mockReader).read();
         inOrder.verify(mockWriter).write("Hello");
