@@ -1,5 +1,14 @@
 package io.github.adorjan.loader;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.matches;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,10 +17,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -30,7 +36,7 @@ public class PropertiesLoaderTest {
 
     @BeforeMethod
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
         underTest = new PropertiesLoader();
         underTest.setLogger(mockLogger);
     }
@@ -41,17 +47,17 @@ public class PropertiesLoaderTest {
         // WHEN
         underTest.load(Optional.empty());
         // THEN
-        Mockito.verify(mockLogger, Mockito.only()).error(Mockito.anyString(), Mockito.any(FileNotFoundException.class));
+        verify(mockLogger, only()).error(matches("Properties file not found"), any(FileNotFoundException.class));
     }
 
     @Test
     public void testLoadShouldThrowIOExceptionWhenUnableToLoadPropertiesFile() throws IOException {
-        // GIVEN in setUp
+        // GIVEN
+        when(mockInputStream.read(any())).thenThrow(new IOException());
         // WHEN
-        Mockito.when(mockInputStream.read(Mockito.any())).thenThrow(new IOException());
         underTest.load(Optional.of(mockInputStream));
         // THEN
-        Mockito.verify(mockLogger, Mockito.only()).error(Mockito.anyString(), Mockito.any(IOException.class));
+        verify(mockLogger, only()).error(matches("Unable to load properties file"), any(IOException.class));
     }
 
     @Test
@@ -61,7 +67,7 @@ public class PropertiesLoaderTest {
         // WHEN
         Optional<Properties> properties = underTest.load(Optional.of(inputStream));
         // THEN
-        Assert.assertTrue(properties.isPresent());
-        Assert.assertEquals(properties.get().getProperty(KEY), VALUE);
+        assertTrue(properties.isPresent());
+        assertEquals(properties.get().getProperty(KEY), VALUE);
     }
 }

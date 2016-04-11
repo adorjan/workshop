@@ -1,8 +1,9 @@
 package io.github.adorjan.writer;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.MockitoAnnotations.initMocks;
+
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -15,7 +16,7 @@ public class LoggerBasedWriterTest {
 
     @BeforeMethod
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
         underTest = new LoggerBasedWriter();
         underTest.setLogger(mockLogger);
     }
@@ -26,6 +27,6 @@ public class LoggerBasedWriterTest {
         // WHEN
         underTest.write("Hello");
         // THEN
-        Mockito.verify(mockLogger).info("Hello");
+        verify(mockLogger).info("Hello");
     }
 }

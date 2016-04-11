@@ -1,9 +1,10 @@
 package io.github.adorjan.reader;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Optional;
 import java.util.Properties;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.github.adorjan.exception.KeyNotFoundException;
@@ -12,8 +13,9 @@ public class PropertiesReaderTest {
 
     private PropertiesReader underTest;
     private final String KEY = "key";
+    private final String KEY_NOT_FOUND_EXCEPTION_MESSAGE = "The given key was not found.";
 
-    @Test(expectedExceptions = KeyNotFoundException.class)
+    @Test(expectedExceptions = KeyNotFoundException.class, expectedExceptionsMessageRegExp = KEY_NOT_FOUND_EXCEPTION_MESSAGE)
     public void testReadShouldThrowKeyNotFoundExceptionWhenNoPropertiesSet() {
         // GIVEN
         underTest = new PropertiesReader(Optional.empty(), KEY);
@@ -22,7 +24,7 @@ public class PropertiesReaderTest {
         // THEN (expect KeyNotFoundException)
     }
 
-    @Test(expectedExceptions = KeyNotFoundException.class)
+    @Test(expectedExceptions = KeyNotFoundException.class, expectedExceptionsMessageRegExp = KEY_NOT_FOUND_EXCEPTION_MESSAGE)
     public void testReadShouldThrowKeyNotFoundExceptionWhenPropertiesSetAndKeyIsNotPresent() {
         // GIVEN
         Properties properties = new Properties();
@@ -41,6 +43,6 @@ public class PropertiesReaderTest {
         // WHEN
         String result = underTest.read();
         // THEN
-        Assert.assertEquals(result, KEY);
+        assertEquals(result, KEY);
     }
 }
